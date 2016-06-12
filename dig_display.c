@@ -15,27 +15,30 @@ static enum
 	DISPLAY_MODEL_ALSM=6,
 	DISPLAY_MODEL_ALSH=7,
 }DIG_DISPLAY_MODEL;
+//数码管显示模式标志位
 
 static unsigned int temp_clock,temp_alarm;
 
 sbit LSA=P2^2;
 sbit LSB=P2^3;
 sbit LSC=P2^4;
+//引脚定义
 
 DIG_CODE[]={0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,0x7f,0x6f,0x40,
 				0x04,0x00,0x39,0x77,0x38};
 				//0-9,-,_,null,c,a,l
 				//    10 11 12 131415
+//显示字母表
 
 void dig_display(time *time_input)
 {
 	unsigned int i,j;
 	for (i=0;i<8;i++)
 	{
-		GPIO_DIG=0x00;//clear residual
-		switch(i)//select bit
+		GPIO_DIG=0x00;//消影
+		switch(i)//位选
 		{
-			case(0)://second low
+			case(0)://秒低位
 				LSA=0;LSB=0;LSC=0; 
 				if (time_input->display_model!=DISPLAY_MODEL_CL)
 				{
@@ -44,7 +47,7 @@ void dig_display(time *time_input)
 				}
 				GPIO_DIG=DIG_CODE[time_input->second%10];
 				break;
-			case(1)://second high
+			case(1)://秒高位
 				LSA=1;LSB=0;LSC=0;
 				switch (time_input->display_model)
 				{
@@ -76,11 +79,11 @@ void dig_display(time *time_input)
 						break;
 				}
 				break;
-			case(2)://separator
+			case(2)://分隔符
 				LSA=0;LSB=1;LSC=0; 
 				GPIO_DIG=DIG_CODE[10];
 				break;
-			case(3)://minute low
+			case(3)://分低位
 				LSA=1;LSB=1;LSC=0;
 				switch (time_input->display_model)
 				{
@@ -134,15 +137,15 @@ void dig_display(time *time_input)
 						break;
 				}
 				break;
-			case(4)://minute high
+			case(4)://分高位
 				LSA=0;LSB=0;LSC=1; 
 				GPIO_DIG=DIG_CODE[time_input->minute/10];
 				break;
-			case(5)://separator
+			case(5)://分隔符
 				LSA=1;LSB=0;LSC=1; 
 				GPIO_DIG=DIG_CODE[10];
 				break;
-			case(6)://hour low
+			case(6)://时低位
 				LSA=0;LSB=1;LSC=1;
 				switch (time_input->display_model)
 				{
@@ -195,7 +198,7 @@ void dig_display(time *time_input)
 						break;
 				} 
 				break;
-			case(7)://hour high
+			case(7)://时高位
 				LSA=1;LSB=1;LSC=1; 
 				GPIO_DIG=DIG_CODE[time_input->hour/10];
 				break;	
@@ -205,6 +208,6 @@ void dig_display(time *time_input)
 		if(i>7) i=0;
 		j=10;
 		while(j--) delay(1);
-		GPIO_DIG=0x00;//clear residual
+		GPIO_DIG=0x00;//消影
 	}	
 }

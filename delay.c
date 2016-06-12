@@ -1,6 +1,7 @@
 #include <reg51.h>
 
-void delay (unsigned int i)//delay 10us
+void delay (unsigned int i)
+//延时10us
 {
 	unsigned int a,b;
 	for(;i>0;i--)
